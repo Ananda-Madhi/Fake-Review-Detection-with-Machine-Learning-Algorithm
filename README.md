@@ -1,0 +1,2 @@
+# Fake-Review-Detection-with-Machine-Learning-Algorithm
+This project tackles the problem of fraudulent online reviews by applying machine learning and Natural Language Processing (NLP). The system is designed to analyze review text and metadata to automatically classify reviews as 'genuine' or 'fake,' helping to protect consumer trust and ensure platform integrity. using dataset from Kaggle 40k data
