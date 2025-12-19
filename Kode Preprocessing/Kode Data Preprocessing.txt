@@ -1,0 +1,157 @@
+1. Kode Data Cleaning :
+
+import pandas as pd
+
+import re
+
+
+
+df = pd.read_csv("fr_dataset.csv")
+
+
+
+def clean_text(text):
+
+    return re.sub(r'[^A-Za-z0-9\s]', '', str(text))
+
+
+
+df['clean_text'] = df['text'].apply(clean_text)
+
+
+
+print(df[['text', 'clean_text']].head())
+
+
+
+df.to_excel("fr_dataset_cleaned.xlsx", index=False)
+
+
+
+2. Kode Casefolding :
+
+import pandas as pd
+
+
+df = pd.read_excel("fr_dataset_cleaned.xlsx")
+
+df['clean_text_lower'] = df['clean_text'].str.lower()
+
+df.to_excel("fr_dataset_cleaned_final.xlsx", index=False)
+
+print(df[['clean_text', 'clean_text_lower']].head())
+
+
+
+
+3. Kode Tokenizing :
+
+import pandas as pd
+
+from nltk.tokenize import ToktokTokenizer
+
+
+
+df = pd.read_excel("fr_dataset_cleaned_final.xlsx")
+
+tokenizer = ToktokTokenizer()
+
+df['tokens'] = df['clean_text_lower'].apply(tokenizer.tokenize)
+
+df.to_excel("fr_dataset_tokenized.xlsx", index=False)
+
+print(df[['clean_text_lower', 'tokens']].head())
+
+
+
+
+4.  import pandas as pd
+
+from nltk.tokenize import ToktokTokenizer
+
+import ast
+
+
+
+df = pd.read_excel("fr_dataset_cleaned_final.xlsx")
+
+tokenizer = ToktokTokenizer()
+
+df['tokens'] = df['clean_text_lower'].apply(lambda x: tokenizer.tokenize(x))
+
+df.to_excel("fr_dataset_tokenized.xlsx", index=False)
+
+
+
+df = pd.read_excel("fr_dataset_tokenized.xlsx")
+
+df['tokens'] = df['tokens'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+
+
+
+extra_stopwords = {
+
+    'a','an','the','to','of','on','in','into','onto','at','by','for','from','with','without',
+
+    'about','above','below','over','under','between','among','beside','near','through','during',
+
+    'inside','outside','before','after','against','along','around','upon','within','beyond',
+
+    'i','you','he','she','it','we','they','me','him','her','us','them',
+
+    'my','your','his','its','our','their','mine','yours','hers','ours','theirs',
+
+    'myself','yourself','himself','herself','itself','ourselves','yourselves','themselves',
+
+    'this','that','these','those','who','whom','whose','which','what','where','when','why','how',
+
+    'is','am','are','was','were','be','been','being','do','does','did','doing',
+
+    'have','has','so','as','and','had','having','will','would','shall','should','can','could','may','might','must' 
+
+}
+
+
+
+df['stopword_removal'] = df['tokens'].apply(
+
+    lambda tokens: [t for t in tokens if t.lower() not in extra_stopwords]
+
+)
+
+
+
+df.to_excel("fr_dataset_stopword_removed.xlsx", index=False)
+
+print(df[['clean_text_lower', 'tokens', 'stopword_removal']].head())
+
+
+
+5.  Kode Stemming :
+
+from nltk.stem import PorterStemmer
+
+import pandas as pd
+
+
+
+df = pd.read_excel("fr_dataset_stopword_removed.xlsx")
+
+
+
+stemmer = PorterStemmer()
+
+df['stemming'] = df['stopword_removal'].apply(
+
+    lambda tokens: [stemmer.stem(t) for t in tokens]
+
+)
+
+
+
+df.to_excel("fr_dataset_stemmed.xlsx", index=False)
+
+print(df[['stopword_removal', 'stemming']].head())
+
+
+
